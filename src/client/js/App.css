@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Libre+Franklin');
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  background: #313A7F;
+  font-family: 'Libre Franklin','Helvetica Neue',Helvetica,'Calibri',sans-serif;
+}

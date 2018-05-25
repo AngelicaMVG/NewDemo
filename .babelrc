@@ -1,0 +1,17 @@
+{
+  "presets": [
+    "react",
+    [
+      "env",
+      {
+        "targets": {
+          "browsers": "last 2 versions",
+          "chrome": "56"
+        },
+        "loose": true,
+        "modules": false
+      }
+    ]
+  ],
+  "plugins": ["transform-class-properties", "transform-object-rest-spread"]
+}
