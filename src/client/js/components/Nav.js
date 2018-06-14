@@ -26,7 +26,7 @@ export default class Navbar extends Component {
           to="/students"
           style={{ color: 'blue', textDecoration: 'none' }}
         >
-          Students
+          Dashboard
         </NavLink>,
         <a
           style={{

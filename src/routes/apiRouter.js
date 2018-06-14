@@ -1,5 +1,6 @@
 const Router = require('express').Router;
 const Week = require('../models/Week.js');
+const Holidays = require('../models/Holidays.js');
 
 const Days = require('../models/Days.js');
 
@@ -33,9 +34,6 @@ function singleDay(req, res) {
 }
 
 function createDay(req, res) {
-  console.log('PARAMS', req.params);
-  console.log('BODY', req.body);
-
   Days.query()
     .insert(req.body)
     .where('studentId', req.params.studentId)
@@ -76,7 +74,6 @@ function weekIndex(req, res) {
     .eager('[student,days]')
 
     .then(data => {
-      console.log(data);
       return res.json(data);
     })
     .catch(e => {
@@ -131,7 +128,6 @@ function deleteWeek(req, res) {
         .where('weekId', recordToDelete.id)
         .returning('*')
         .then(data => {
-          console.log('deleting records:', data);
           return recordToDelete;
         })
         .catch(err => {
@@ -141,6 +137,64 @@ function deleteWeek(req, res) {
     })
     .then(d => {
       return Week.query()
+        .deleteById(d.id)
+        .then(() => {
+          return d;
+        });
+    })
+    .then(d => res.json(d).status(200))
+    .catch(err => {
+      return res.send(err).status(500);
+    });
+}
+
+function holidays(req, res) {
+  Holidays.query().then(data => {
+    return res.json(data);
+  });
+}
+
+// function newHoliday(req, res) {
+//   Holidays.query()
+//     .insert(req.body)
+//     .then(newRecord => {
+//       return res.json(newRecord).status(200);
+//     })
+//     .catch(err => res.send(err).status(500));
+// }
+
+function updateHoliday(req, res) {
+  const id = parseInt(req.params.id);
+  const newData = req.body;
+
+  Holidays.query()
+    .updateAndFetchById(id, newData)
+    .then(function(updated) {
+      res.json(updated).status(200);
+    })
+    .catch(function(e) {
+      res.json({ error: e }).status(500);
+    });
+}
+
+function getOne(req, res) {
+  Holidays.query()
+    .findById(req.params.id)
+    .then(data => {
+      return res.json(data).status(200);
+    })
+    .catch(e => {
+      res.send('Error: ', e).status(500);
+    });
+}
+
+function deleteHoliday(req, res) {
+  Holidays.query()
+    .where('id', req.params.id)
+    .first()
+    .returning('*')
+    .then(d => {
+      return Holidays.query()
         .deleteById(d.id)
         .then(() => {
           return d;
@@ -166,5 +220,12 @@ apiRouter
   .post('/students/:studentId/weeks/new', createWeek)
   .put('/students/:studentId/weeks/:id/edit', updateWeek)
   .delete('/students/:studentId/weeks/:id', deleteWeek);
+
+apiRouter
+  .get('/holidays', holidays)
+  .get('/holidays/:id', getOne)
+  // .post('/holidays/new', newHoliday)
+  .put('/holidays/:id', updateHoliday)
+  .delete('/holidays/:id', deleteHoliday);
 
 module.exports = apiRouter;

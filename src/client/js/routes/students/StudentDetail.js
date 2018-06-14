@@ -20,7 +20,7 @@ const CardDetail = glamorous.div(
     alignItems: 'center'
   },
   ({ color }) => ({
-    backgroundColor: '#ccc'
+    backgroundColor: '#e9e8e6'
   })
 );
 
@@ -29,7 +29,9 @@ class StudentDetail extends Component {
     student: {},
     weeks: [],
     homework: [],
-    attendance: []
+    attendance: [],
+    totalDays: 75,
+    today: 0
   };
 
   componentDidMount() {
@@ -45,40 +47,56 @@ class StudentDetail extends Component {
         )
       });
     });
+    req.get('/api/holidays/1').then(res => {
+      this.setState({
+        totalDays: res.body.totalDays - res.body.allHolidays,
+        today: res.body.today - res.body.holidaysToday
+      });
+    });
   }
 
   getHomeworkPercentage = () => {
     if (this.state.homework.length) {
       return (
         (
-          this.state.homework
+          (this.state.homework
             .reduce((a, b) => a.concat(b))
             .reduce((a, b) => a + b) *
-          100 /
-          75
+            100) /
+          this.state.totalDays
+        ).toFixed(2) + '%'
+      );
+    }
+  };
+
+  getHomeworkPartialPercentage = () => {
+    if (this.state.homework.length) {
+      return (
+        (
+          (this.state.homework
+            .reduce((a, b) => a.concat(b))
+            .reduce((a, b) => a + b) *
+            100) /
+          this.state.today
         ).toFixed(2) + '%'
       );
     }
   };
 
   changeColor = () => {
-    if (this.getAttendancePercentage() <= '80%') {
-      document.querySelector('.attendance').style.color = 'red';
+    if (
+      this.getAttendancePartialPercentage() <= '80%' &&
+      this.getHomeworkPartialPercentage() <= '80%'
+    ) {
+      document.querySelector('.partial').style.backgroundColor = 'red';
     }
     if (
-      this.getAttendancePercentage() > '80%' &&
-      this.getAttendancePercentage() <= '85%'
+      (this.getAttendancePartialPercentage() > '80%' &&
+        this.getAttendancePartialPercentage() <= '85%') ||
+      (this.getHomeworkPartialPercentage() > '80%' &&
+        this.getHomeworkPartialPercentage() <= '85%')
     ) {
-      document.querySelector('.attendance').style.color = 'yellow';
-    }
-    if (this.getHomeworkPercentage() <= '80%') {
-      document.querySelector('.homework').style.color = 'red';
-    }
-    if (
-      this.getHomeworkPercentage() > '80%' &&
-      this.getHomeworkPercentage() <= '85%'
-    ) {
-      document.querySelector('.homework').style.color = 'yellow';
+      document.querySelector('.partial').style.backgroundColor = 'yellow';
     }
   };
 
@@ -86,11 +104,24 @@ class StudentDetail extends Component {
     if (this.state.attendance.length) {
       return (
         (
-          this.state.attendance
+          (this.state.attendance
             .reduce((a, b) => a.concat(b))
             .reduce((a, b) => a + b) *
-          100 /
-          75
+            100) /
+          this.state.totalDays
+        ).toFixed(2) + '%'
+      );
+    }
+  };
+  getAttendancePartialPercentage = () => {
+    if (this.state.attendance.length) {
+      return (
+        (
+          (this.state.attendance
+            .reduce((a, b) => a.concat(b))
+            .reduce((a, b) => a + b) *
+            100) /
+          this.state.today
         ).toFixed(2) + '%'
       );
     }
@@ -98,7 +129,6 @@ class StudentDetail extends Component {
 
   render() {
     const { student } = this.state;
-
     this.changeColor();
 
     return (
@@ -123,16 +153,50 @@ class StudentDetail extends Component {
                 {student.name} {student.lastName}
               </h2>
               <div>
-                <h3 className="homework" style={{ color: 'green' }}>
-                  {this.getHomeworkPercentage()}
-                </h3>{' '}
-                <span>Tareas</span>
-              </div>
-              <div>
-                <h3 className="attendance" style={{ color: 'green' }}>
-                  {this.getAttendancePercentage()}
-                </h3>
-                <span>Asistencias</span>
+                <div
+                  className="total"
+                  style={{
+                    width: '300px',
+                    display: 'flex',
+                    border: '2px solid black',
+                    justifyContent: 'space-around'
+                  }}
+                >
+                  <h2>Total</h2>
+                  <div>
+                    <h3>{this.getHomeworkPercentage()}</h3>
+                    <span>Tareas</span>
+                  </div>
+                  <div>
+                    <h3>{this.getAttendancePercentage()}</h3>
+                    <span>Asistencias</span>
+                  </div>
+                </div>
+                <div
+                  className="partial"
+                  style={{
+                    background: 'green',
+                    width: '300px',
+                    display: 'flex',
+                    border: '2px solid black',
+                    justifyContent: 'space-around',
+                    marginTop: '10px'
+                  }}
+                >
+                  <h2>Parcial</h2>
+                  <div>
+                    <h3 className="homework">
+                      {this.getHomeworkPartialPercentage()}
+                    </h3>
+                    <span>Tareas</span>
+                  </div>
+                  <div>
+                    <h3 className="attendance">
+                      {this.getAttendancePartialPercentage()}
+                    </h3>
+                    <span>Asistencias</span>
+                  </div>
+                </div>
               </div>
             </CardDetail>
           </Div>

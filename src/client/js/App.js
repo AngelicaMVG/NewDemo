@@ -24,7 +24,8 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      isAuthenticated: false
+      isAuthenticated: false,
+      asuetos: ''
     };
   }
 
@@ -76,10 +77,7 @@ class App extends Component {
               />
               <Route path="/students/new" component={StudentNew} />
               <PrivateRoute path="/students/:id" component={StudentDetail} />
-
               <PrivateRoute path="/students" component={StudentList} />
-
-              <PrivateRoute path="/students/:id" component={StudentDetail} />
             </Switch>
           </Router>
         </Error>

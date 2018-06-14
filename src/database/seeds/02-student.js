@@ -14,26 +14,31 @@
 
 const fake = [
   {
+    id: 1,
     name: 'Maribel',
     lastName: 'Navia',
     avatar: 'http://simpleicon.com/wp-content/uploads/user1.png'
   },
   {
+    id: 2,
     name: 'Ingrid',
     lastName: 'Garcia',
     avatar: 'http://simpleicon.com/wp-content/uploads/user1.png'
   },
   {
+    id: 3,
     name: 'Cesar',
     lastName: 'Hernandez',
     avatar: 'http://simpleicon.com/wp-content/uploads/user1.png'
   },
   {
+    id: 4,
     name: 'Damian',
     lastName: 'Allende',
     avatar: 'http://simpleicon.com/wp-content/uploads/user1.png'
   },
   {
+    id: 5,
     name: 'Arturo',
     lastName: 'Ortega',
     avatar: 'http://simpleicon.com/wp-content/uploads/user1.png'

@@ -7,7 +7,6 @@ function studentsIndex(req, res) {
   Student.query()
     .eager('[weeks, weeks.days]')
     .then(data => {
-      console.log(data);
       return res.json(data);
     });
 }
